@@ -1,13 +1,9 @@
 import os
 
-# File location defaults
-current_working_dir = os.getcwd()
-data_dir = os.path.join(current_working_dir, "data")
-graphs_dir = os.path.join(current_working_dir, "graphs")
 
 # Standardized defaults for figure sizing
-FIG_HEIGHT = 900
-FIG_WIDTH = 1600
+FIG_HEIGHT = 810
+FIG_WIDTH = 1440
 
 # Standardized defaults for alignment anchors
 DEFAULT_ALIGNMENT = "left"
@@ -25,26 +21,12 @@ PLOTLY_FONTS = dict(
 PLOTLY_TEMPLATE = "plotly_dark"
 
 
-def annotate(
-    fig,
-    annotation,
-    align=DEFAULT_ALIGNMENT,
-    xref=DEFAULT_XREF,
-    yref=DEFAULT_YREF,
-    x=0,
-    y=0.96875,
-    showarrow=False,
-):
-    # Apply text annotation using default alignment and location
-    fig.add_annotation(
-        text=annotation,
-        align=align,
-        xref=xref,
-        yref=yref,
-        x=x,
-        y=y,
-        showarrow=showarrow,
-    )
+def init_dirs(data_dir, graphs_dir):
+    # Create directories if nonexistant
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir)
+    if not os.path.exists(graphs_dir):
+        os.mkdir(graphs_dir)
 
 
 def default_font(fig):
@@ -69,15 +51,35 @@ def default_size(fig):
     )
 
 
-def init_dirs():
-    # Create directories if nonexistant
-    if not os.path.exists(data_dir):
-        os.mkdir(data_dir)
-    if not os.path.exists(graphs_dir):
-        os.mkdir(graphs_dir)
+def default(fig):
+    default_font(fig)
+    default_template(fig)
+    default_size(fig)
 
 
-def save_html(fig, title, auto_open=True):
+def annotate(
+    fig,
+    annotation,
+    align=DEFAULT_ALIGNMENT,
+    xref=DEFAULT_XREF,
+    yref=DEFAULT_YREF,
+    x=0,
+    y=0.96875,
+    showarrow=False,
+):
+    # Apply text annotation using default alignment and location
+    fig.add_annotation(
+        text=annotation,
+        align=align,
+        xref=xref,
+        yref=yref,
+        x=x,
+        y=y,
+        showarrow=showarrow,
+    )
+
+
+def save_html(fig, title, graphs_dir, auto_open=True):
     # Save figure to graphs directory with title as filename
     filename = title.strip().replace(" ", "_") + ".html"
     filepath = os.path.join(graphs_dir, filename)
