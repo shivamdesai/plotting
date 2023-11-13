@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import os
 import pandas as pd
 import plotly.graph_objects as go
@@ -26,6 +27,8 @@ def _main():
     plwp.init_dirs(data_dir, graphs_dir)
 
     # Output file timestamp
+    dt_now = datetime.datetime.now()
+    file_prefix = dt_now.strftime("%Y_%m_%d_%H%M%S_")
 
     args = get_args()
     print("\n Command line argument values: " + str(args) + "\n")
@@ -48,6 +51,7 @@ def _main():
             [{"type": "domain"}, {"type": "domain"}]
         ],
     )
+
     fig.add_trace(
         go.Pie(
             labels=df['Asset'],
@@ -64,6 +68,7 @@ def _main():
         row=1,
         col=1,
     )
+
     fig.add_trace(
         go.Pie(
             labels=df['Class'],
@@ -80,6 +85,7 @@ def _main():
         row=1,
         col=2,
     )
+
     fig.add_trace(
         go.Pie(
             labels=df['Resource'],
@@ -102,9 +108,7 @@ def _main():
     )
 
     plwp.default(fig)
-
-    # fig.show()
-    plwp.save_html(fig, args.title, graphs_dir, auto_open=True)
+    plwp.save_html(fig, file_prefix + args.title, graphs_dir, auto_open=True)
 
 
 if __name__ == "__main__":
