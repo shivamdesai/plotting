@@ -32,6 +32,23 @@ def _main():
     df = pd.read_csv('data/imdb_breaking_bad.csv')
     print(df.to_string())
 
+    fig = go.Figure(data=go.Heatmap(
+        z=[
+            [1, 20, 30],
+            [20, 1, 60],
+            [30, 60, 1],
+        ],
+    ))
+
+    fig.update_layout(
+        title_text=args.title,
+    )
+
+    plwp.default(fig)
+
+    # fig.show()
+    plwp.save_html(fig, args.title, graphs_dir, auto_open=True)
+
 
 if __name__ == "__main__":
     _main()
