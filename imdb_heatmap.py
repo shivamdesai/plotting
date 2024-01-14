@@ -93,6 +93,8 @@ def _main():
     fig.layout.yaxis.type = 'category'
     fig.update_layout(
         title_text=args.title,
+        xaxis_title="Season",
+        yaxis_title="Episode",
         height=875,
         width=500,
     )
