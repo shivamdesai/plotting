@@ -60,11 +60,18 @@ def _main():
         heatmap_data.append(season_ratings)
     # print(heatmap_data)
 
+    x_vals = list(range(1, season_num_max + 1))
+    y_vals = list(range(1, season_episode_num_max + 1))
+    logging.info("x axis labels: %s", x_vals)
+    logging.info("y axis labels: %s", y_vals)
+
     fig = go.Figure(data=go.Heatmap(
+        x=x_vals,
+        y=y_vals,
         z=heatmap_data,
         text=heatmap_data,
-        x=list(range(1, season_num_max)),
-        y=list(range(1, season_episode_num_max)),
+        texttemplate="%{text}",
+        textfont={"size": 12},
         colorscale=[[0.000, "rgb(0,0,0)"],
                     [0.699, "rgb(0,0,0)"],
                     [0.699, "rgb(255,0,0)"],
@@ -82,12 +89,15 @@ def _main():
 
     plwp.default_font(fig)
     plwp.default_template(fig)
-    fig.update_xaxes(side="top")
+    # TODO - reformat these to have a semblance of conformity
+    fig.layout.yaxis.type = 'category'
     fig.update_layout(
         title_text=args.title,
-        height=750,
-        width=750,
+        height=875,
+        width=500,
     )
+    fig.update_xaxes(side="top", ticktext=x_vals)
+    fig.update_yaxes(ticktext=y_vals)
     fig['layout']['yaxis']['autorange'] = "reversed"
 
     # fig.show()
