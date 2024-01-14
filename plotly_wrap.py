@@ -1,3 +1,4 @@
+import datetime
 import os
 
 
@@ -81,6 +82,8 @@ def annotate(
 
 def save_html(fig, title, graphs_dir, auto_open=True):
     # Save figure to graphs directory with title as filename
-    filename = title.strip().replace(" ", "_") + ".html"
+    dt_now = datetime.datetime.now()
+    file_prefix = dt_now.strftime("%Y_%m_%d_%H%M%S_")
+    filename = file_prefix + title.strip().replace(" ", "_") + ".html"
     filepath = os.path.join(graphs_dir, filename)
     fig.write_html(filepath, auto_open=auto_open)
