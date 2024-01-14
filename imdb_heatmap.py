@@ -9,22 +9,30 @@ from plotly.subplots import make_subplots
 
 def get_args():
     parser = argparse.ArgumentParser(
-        description='IMDb Heatmap Generator')
+        description="IMDb Heatmap Generator \n python imdb_heatmap.py -t 'Breaking Bad' --loglevel=20")
     parser.add_argument('--title', '-t',
-                        help='Graph title',
+                        help='Figure title',
                         dest='title',
-                        default='Breaking Bad',
+                        default='Figure Title',
                         type=str)
+    parser.add_argument('--loglevel',
+                        help='Level of logging to output',
+                        dest='loglevel',
+                        default=logging.INFO,
+                        type=int)
     return parser.parse_args()
 
 
 def _main():
 
+    # Inputs and config
+    args = get_args()
     logging.basicConfig(
         format='%(levelname)s %(asctime)s %(message)s',
-        level=logging.DEBUG,
+        level=args.loglevel,
         datefmt='%Y_%m_%d %I:%M:%S %p'
     )
+    logging.debug("Command line argument values: %s", str(args))
 
     # File location defaults
     current_working_dir = os.getcwd()
@@ -32,12 +40,11 @@ def _main():
     graphs_dir = os.path.join(current_working_dir, "graphs")
     plwp.init_dirs(data_dir, graphs_dir)
 
-    args = get_args()
-    logging.info("Command line argument values: %s", str(args))
-
     # Dataframe parse
     df = pd.read_csv('data/imdb_breaking_bad.csv', index_col=0)
     # print(df.to_string())
+    df_description = df.describe()
+    logging.debug("Dataframe description: %s", df_description)
 
     # Determine heatmap dimensions
     season_episode_num_max = df['season_episode_num'].max()
@@ -46,9 +53,10 @@ def _main():
     logging.info("season_num_max: %d", season_num_max)
 
     heatmap_data = []
+    logging.debug("beginning heatmap data generation")
     for i in range(season_episode_num_max):
         current_season_episode_num = i + 1
-        logging.info("current_season_episode_num: %d", current_season_episode_num)
+        logging.debug("current_season_episode_num: %d", current_season_episode_num)
         season_df = df[df['season_episode_num'] == current_season_episode_num]
         season_ratings = season_df['rating'].tolist()
         if len(season_ratings) != season_num_max:
@@ -56,14 +64,16 @@ def _main():
             for j in range(seasons_without_episode):
                 season_ratings.insert(0, 0)
                 # season_ratings.insert(0,None)
-        logging.info("season_ratings: %s", season_ratings)
+        logging.debug("season_ratings: %s", season_ratings)
         heatmap_data.append(season_ratings)
+    logging.debug("ending heatmap data generation")
+    logging.debug("heatmap data: %s", heatmap_data)
     # print(heatmap_data)
 
     x_vals = list(range(1, season_num_max + 1))
     y_vals = list(range(1, season_episode_num_max + 1))
-    logging.info("x axis labels: %s", x_vals)
-    logging.info("y axis labels: %s", y_vals)
+    logging.debug("x axis labels: %s", x_vals)
+    logging.debug("y axis labels: %s", y_vals)
 
     fig = go.Figure(data=go.Heatmap(
         x=x_vals,
