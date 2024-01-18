@@ -9,7 +9,7 @@ from plotly.subplots import make_subplots
 
 def get_args():
     parser = argparse.ArgumentParser(
-        description="IMDb Heatmap Generator \n python imdb_heatmap.py -t 'Breaking Bad' --loglevel=20")
+        description="IMDb Heatmap Generator \n python imdb_heatmap.py -t 'IMDb Heatmap SHOW' --loglevel=20")
     parser.add_argument('--title', '-t',
                         help='Figure title',
                         dest='title',
@@ -42,6 +42,7 @@ def _main():
 
     # Dataframe parse
     df = pd.read_csv('data/imdb_breaking_bad.csv', index_col=0)
+    # df = pd.read_csv('data/imdb_tinker.csv', index_col=0)
     # print(df.to_string())
     df_description = df.describe()
     logging.debug("Dataframe description: %s", df_description)
@@ -86,18 +87,17 @@ def _main():
         zmax=100,
         colorscale=[
             # 00-50 plotly_dark paper_bgcolor
-            [0.00, "rgb(17,17,17)"],
             # 50-70 Red
-            [0.50, "rgb(255,0,0)"],
             # 70-80 Orange
-            [0.70, "rgb(255,109,0)"],
             # 80-90 Yellow
-            [0.80, "rgb(255,255,0)"],
             # 90-95 Light Green
-            [0.90, "rgb(150,200,150)"],
             # 95-100 Bright Green
-            [0.95, "rgb(0,225,0)"],
-            [1.00, "rgb(0,225,0)"],
+            [0.00, "rgb(17,17,17)"],
+            [0.60, "rgb(255,0,0)"],
+            [0.70, "rgb(255,128,0)"],
+            [0.80, "rgb(255,255,0)"],
+            [0.90, "rgb(0,255,0)"],
+            [1.00, "rgb(0,128,0)"],
         ],
     ))
 
