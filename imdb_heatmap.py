@@ -26,13 +26,13 @@ def get_args():
 
 
 def analyze_data(df):
-    logging.debug("Dataframe: \n%s", df.to_string())
+    logging.debug('Dataframe: \n%s', df.to_string())
     df_description = df.describe()
-    logging.debug("Dataframe description: \n%s", df_description)
+    logging.debug('Dataframe description: \n%s', df_description)
     df_dropped = df.drop(df[df['rating'] < _THRESH].index)
-    logging.debug("Dataframe dropped: \n%s", df_dropped)
+    logging.debug('Dataframe dropped: \n%s', df_dropped)
     for index, row in df_dropped.iterrows():
-        logging.debug("Season %s Episode %s - %s", str(row["season_num"]), str(row["season_episode_num"]), str(row["rating"]))
+        logging.debug('Season %s Episode %s - %s', str(row['season_num']), str(row['season_episode_num']), str(row['rating']))
 
 
 def _main():
@@ -44,12 +44,12 @@ def _main():
         level=args.loglevel,
         datefmt='%Y_%m_%d %I:%M:%S %p'
     )
-    logging.debug("Command line argument values: %s", str(args))
+    logging.debug('Command line argument values: %s', str(args))
 
     # File location defaults
     current_working_dir = os.getcwd()
-    data_dir = os.path.join(current_working_dir, "data")
-    graphs_dir = os.path.join(current_working_dir, "graphs")
+    data_dir = os.path.join(current_working_dir, 'data')
+    graphs_dir = os.path.join(current_working_dir, 'graphs')
     plwp.init_dirs(data_dir, graphs_dir)
 
     # Dataframe parse
@@ -59,15 +59,15 @@ def _main():
 
     # Determine heatmap dimensions
     season_episode_num_max = df['season_episode_num'].max()
-    logging.info("season_episode_num_max: %d", season_episode_num_max)
+    logging.info('season_episode_num_max: %d', season_episode_num_max)
     season_num_max = df['season_num'].max()
-    logging.info("season_num_max: %d", season_num_max)
+    logging.info('season_num_max: %d', season_num_max)
 
     heatmap_data = []
-    logging.debug("beginning heatmap data generation")
+    logging.debug('beginning heatmap data generation')
     for i in range(season_episode_num_max):
         current_season_episode_num = i + 1
-        logging.debug("current_season_episode_num: %d", current_season_episode_num)
+        logging.debug('current_season_episode_num: %d', current_season_episode_num)
         season_df = df[df['season_episode_num'] == current_season_episode_num]
         season_ratings = season_df['rating'].tolist()
         if len(season_ratings) != season_num_max:
@@ -75,24 +75,24 @@ def _main():
             for j in range(seasons_without_episode):
                 season_ratings.insert(0, 0)
                 # season_ratings.insert(0,None)
-        logging.debug("season_ratings: %s", season_ratings)
+        logging.debug('season_ratings: %s', season_ratings)
         heatmap_data.append(season_ratings)
-    logging.debug("ending heatmap data generation")
-    logging.debug("heatmap data: %s", heatmap_data)
+    logging.debug('ending heatmap data generation')
+    logging.debug('heatmap data: %s', heatmap_data)
     # print(heatmap_data)
 
     x_vals = list(range(1, season_num_max + 1))
     y_vals = list(range(1, season_episode_num_max + 1))
-    logging.debug("x axis labels: %s", x_vals)
-    logging.debug("y axis labels: %s", y_vals)
+    logging.debug('x axis labels: %s', x_vals)
+    logging.debug('y axis labels: %s', y_vals)
 
     fig = go.Figure(data=go.Heatmap(
         x=x_vals,
         y=y_vals,
         z=heatmap_data,
         text=heatmap_data,
-        texttemplate="%{text}",
-        textfont={"size": 12},
+        texttemplate='%{text}',
+        textfont={'size': 12},
         zmin=0,
         zmax=100,
         colorscale=[
@@ -102,12 +102,12 @@ def _main():
             # 80-90 Yellow
             # 90-95 Light Green
             # 95-100 Bright Green
-            [0.00, "rgb(17,17,17)"],
-            [0.60, "rgb(255,0,0)"],
-            [0.70, "rgb(255,128,0)"],
-            [0.80, "rgb(255,255,0)"],
-            [0.90, "rgb(0,255,0)"],
-            [1.00, "rgb(0,128,0)"],
+            [0.00, 'rgb(17,17,17)'],
+            [0.60, 'rgb(255,0,0)'],
+            [0.70, 'rgb(255,128,0)'],
+            [0.80, 'rgb(255,255,0)'],
+            [0.90, 'rgb(0,255,0)'],
+            [1.00, 'rgb(0,128,0)'],
         ],
     ))
 
@@ -117,18 +117,18 @@ def _main():
     fig.layout.yaxis.type = 'category'
     fig.update_layout(
         title_text=args.title,
-        xaxis_title="Season",
-        yaxis_title="Episode",
+        xaxis_title='Season',
+        yaxis_title='Episode',
         height=875,
         width=500,
     )
-    fig.update_xaxes(side="top", ticktext=x_vals)
+    fig.update_xaxes(side='top', ticktext=x_vals)
     fig.update_yaxes(ticktext=y_vals)
-    fig['layout']['yaxis']['autorange'] = "reversed"
+    fig['layout']['yaxis']['autorange'] = 'reversed'
 
     # fig.show()
     plwp.save_html(fig, args.title, graphs_dir, auto_open=True)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     _main()
