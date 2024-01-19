@@ -6,6 +6,8 @@ import plotly.graph_objects as go
 import plotly_wrap as plwp
 from plotly.subplots import make_subplots
 
+_THRESH = 85
+
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -21,6 +23,16 @@ def get_args():
                         default=logging.INFO,
                         type=int)
     return parser.parse_args()
+
+
+def analyze_data(df):
+    logging.debug("Dataframe: \n%s", df.to_string())
+    df_description = df.describe()
+    logging.debug("Dataframe description: \n%s", df_description)
+    df_dropped = df.drop(df[df['rating'] < _THRESH].index)
+    logging.debug("Dataframe dropped: \n%s", df_dropped)
+    for index, row in df_dropped.iterrows():
+        logging.debug("Season %s Episode %s - %s", str(row["season_num"]), str(row["season_episode_num"]), str(row["rating"]))
 
 
 def _main():
@@ -43,9 +55,7 @@ def _main():
     # Dataframe parse
     df = pd.read_csv('data/imdb_breaking_bad.csv', index_col=0)
     # df = pd.read_csv('data/imdb_tinker.csv', index_col=0)
-    # print(df.to_string())
-    df_description = df.describe()
-    logging.debug("Dataframe description: %s", df_description)
+    analyze_data(df)
 
     # Determine heatmap dimensions
     season_episode_num_max = df['season_episode_num'].max()
